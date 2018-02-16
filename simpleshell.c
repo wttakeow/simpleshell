@@ -400,7 +400,7 @@ return 1;
 /**
  * Method used to print the welcome screen of our shell
  */
-void welcomeScreen(){
+void welcomeScreen(int argc){
         char hostname[1204] = "";
         gethostname(hostname, sizeof(hostname));
         printf("\t**********************************************\n");
@@ -408,6 +408,13 @@ void welcomeScreen(){
         printf("\t**********************************************\n");
         printf("\t      A very simple Shell simulator 2018    \n");
         printf("\t**********************************************\n\n");
+		if(argc != 2){
+		printf("\t	WORKING IN INTERACTIVE MODE        \n\n");
+		}
+		else
+		{
+		printf("\t	WORKING IN BATCH MODE        \n\n");
+		}
         printf("\t**********************************************\n");
 		printf("\t  Welcome     %s  :D\n", hostname);
 		printf("\t**********************************************\n");
@@ -430,6 +437,40 @@ void clearScreen()
 
 
 /**
+* Managing batchcommand
+*/ 
+void batchMode(char inputline[], char *argv[], char *argc[]) {
+    FILE * fp;
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+	int numTokens;
+
+    fp = fopen(argv[1], "r");
+    if (fp == NULL)
+        exit(EXIT_FAILURE);
+
+    while ((read = getline(&line, &len, fp)) != -1) {
+        // scanning
+		if((argc[0] = strtok(line," \n\t")) == NULL) continue;
+		
+		// We read all the tokens of the input and pass it to our
+		// commandHandler as the argument
+		numTokens = 1;
+		while((argc[numTokens] = strtok(NULL, " \n\t")) != NULL) numTokens++;
+		
+		commandHandler(argc);
+    }
+
+    fclose(fp);
+    if (line)
+        free(line);
+    exit(EXIT_SUCCESS);
+}
+
+
+
+/**
 * Main method of our shell
 */ 
 int main(int argc, char *argv[], char ** envp) {
@@ -444,17 +485,23 @@ int main(int argc, char *argv[], char ** envp) {
 	// We call the method of initialization, clearing the screen and the welcome screen
 	init();
     clearScreen();
-	welcomeScreen();
+	welcomeScreen(argc);
+	
     
     // We set our extern char** environ to the environment, so that
     // we can treat it later in other methods
 	environ = envp;
+
+
 	
 	// We set shell=<pathname>/simpleshell as an environment variable for
 	// the child
 	setenv("shell",getcwd(currentDirectory, 1024),1);
 	
-	// Main loop, where the user input will be read and the prompt
+	//seperate between interactive and batch mode
+	if(argc !=2){
+	// interactive mode
+	// Main loop, where the user input will be read and the prompt 
 	// will be printed
 	while(TRUE){
 		// We print the shell prompt if necessary
@@ -476,7 +523,12 @@ int main(int argc, char *argv[], char ** envp) {
 		while((tokens[numTokens] = strtok(NULL, " \n\t")) != NULL) numTokens++;
 		
 		commandHandler(tokens);
-		
+		}
+	}
+	else
+	{
+		//entering batchMode
+		batchMode(inputline, argv, tokens);
 	}
     clearScreen();
 	exit(0);
