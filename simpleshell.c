@@ -1,21 +1,3 @@
-/*
-  * simple-c-shell.c
-  * 
-  * Copyright (c) 2013 Juan Manuel Reyes
-  * 
-  * This program is free software: you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License as published by
-  * the Free Software Foundation, either version 3 of the License, or
-  * (at your option) any later version.
-  * 
-  * This program is distributed in the hope that it will be useful,
-  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  * 
-  * You should have received a copy of the GNU General Public License
-  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,7 +14,7 @@
 #define MAXLINE 1024 // max number of characters from user input
 
 /**
- * Function used to initialize our shell. We used the approach explained in
+ * Function used to initialize our shell based on the approach in
  * http://www.gnu.org/software/libc/manual/html_node/Initializing-the-Shell.html
  */
 void init(){
@@ -87,34 +69,6 @@ void init(){
 }
 
 /**
- * Method used to print the welcome screen of our shell
- */
-void welcomeScreen(){
-        char hostname[1204] = "";
-        gethostname(hostname, sizeof(hostname));
-        printf("\n\t============================================\n");
-        printf("\t               Simple C Shell\n");
-        printf("\t--------------------------------------------\n");
-        printf("\t      A very simple Shell simulator 2018    \n");
-        printf("\t============================================\n\n");
-        printf("\t  Welcome     %s  :D\n", hostname);
-        printf("\n\n");
-}
-
-/**
- * Method used to clear screen of our shell for the start and end our shell
- */
-void clearScreen()
-{
-	static int isFirstRun = TRUE; //Assuming 1 is True 0 is False
-	if(isFirstRun==TRUE)
-	{
-		system("clear");
-		isFirstRun = FALSE;
-	}
-}
-
-/**
  * SIGNAL HANDLERS
  */
 
@@ -150,7 +104,7 @@ void shellPrompt(){
 	// We print the prompt in the form "<user>@<host> <cwd> >"
 	char hostn[1204] = "";
 	gethostname(hostn, sizeof(hostn));
-	printf("%s@%s %s >>>", getenv("LOGNAME"), hostn, getcwd(currentDirectory, 1024));
+	printf("%s %s >>>", hostn, getcwd(currentDirectory, 1024));
 }
 
 /**
@@ -227,6 +181,7 @@ int manageEnviron(char * args[], int option){
 	}
 	return 0;
 }
+
  
 /**
 * Method for launching a program. It can be run in the background
@@ -591,6 +546,37 @@ int commandHandler(char * args[]){
 return 1;
 }
 
+/**
+ * Method used to print the welcome screen of our shell
+ */
+void welcomeScreen(){
+        char hostname[1204] = "";
+        gethostname(hostname, sizeof(hostname));
+        printf("\t**********************************************\n");
+        printf("\t               A Basic C Shell\n");
+        printf("\t**********************************************\n");
+        printf("\t      A very simple Shell simulator 2018    \n");
+        printf("\t**********************************************\n\n");
+        printf("\t**********************************************\n");
+		printf("\t  Welcome     %s  :D\n", hostname);
+		printf("\t**********************************************\n");
+        printf("\n\n");
+}
+
+/**
+ * Method used to clear screen of our shell for the start and end our shell
+ */
+void clearScreen()
+{
+	static int isFirstRun = TRUE; //Assuming 1 is True 0 is False
+	if(isFirstRun==TRUE)
+	{
+		system("clear");
+		isFirstRun = FALSE;
+	}
+}
+
+
 
 /**
 * Main method of our shell
@@ -604,7 +590,7 @@ int main(int argc, char *argv[], char ** envp) {
 							// after certain methods
 	pid = -10; // we initialize pid to an pid that is not possible
 	
-	// We call the method of initialization and the welcome screen
+	// We call the method of initialization, clearing the screen and the welcome screen
 	init();
     clearScreen();
 	welcomeScreen();
