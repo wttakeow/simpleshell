@@ -360,27 +360,17 @@ int commandHandler(char * args[]){
 	
 	char *args_aux[256];
 	
+	// We look for a ; character to separate each arguments into a new array for the arguments
+	while ( args[j] != NULL){
+		if ( (strcmp(args[j],";") == 0)){
+			break;
+		}
+		args_aux[j] = args[j];
+		j++;
+	}
 	
 	// 'quit' command quits the shell
 	if(strcmp(args[0],"quit") == 0) exit(0);
-	// 'WhereAmI' command prints the current directory
- 	else if (strcmp(args[0],"WhereAmI") == 0){
-		if (args[j] != NULL){
-			// If we want file output
-			if ( (strcmp(args[j],">") == 0) && (args[j+1] != NULL) ){
-				fileDescriptor = open(args[j+1], O_CREAT | O_TRUNC | O_WRONLY, 0600); 
-				// We replace de standard output with the appropriate file
-				standardOut = dup(STDOUT_FILENO); 	// first we make a copy of stdout
-													// because we'll want it back
-				dup2(fileDescriptor, STDOUT_FILENO); 
-				close(fileDescriptor);
-				printf("%s\n", getcwd(currentDirectory, 1024));
-				dup2(standardOut, STDOUT_FILENO);
-			}
-		}else{
-			printf("%s\n", getcwd(currentDirectory, 1024));
-		}
-	} 
  	// 'clear' command clears the screen
 	else if (strcmp(args[0],"clear") == 0) system("clear");
 	// 'cd' command to change directory
@@ -443,7 +433,7 @@ void clearScreen()
 * Main method of our shell
 */ 
 int main(int argc, char *argv[], char ** envp) {
-	char line[MAXLINE]; // buffer for the user input
+	char inputline[MAXLINE]; // buffer for the user input
 	char * tokens[LIMIT]; // array for the different tokens in the command
 	int numTokens;
 		
@@ -460,7 +450,7 @@ int main(int argc, char *argv[], char ** envp) {
     // we can treat it later in other methods
 	environ = envp;
 	
-	// We set shell=<pathname>/simple-c-shell as an environment variable for
+	// We set shell=<pathname>/simpleshell as an environment variable for
 	// the child
 	setenv("shell",getcwd(currentDirectory, 1024),1);
 	
@@ -472,13 +462,13 @@ int main(int argc, char *argv[], char ** envp) {
 		no_reprint_prmpt = 0;
 		
 		// We empty the line buffer
-		memset ( line, '\0', MAXLINE );
+		memset ( inputline, '\0', MAXLINE );
 
 		// We wait for user input
-		fgets(line, MAXLINE, stdin);
+		fgets(inputline, MAXLINE, stdin);
 	
 		// If nothing is written, the loop is executed again
-		if((tokens[0] = strtok(line," \n\t")) == NULL) continue;
+		if((tokens[0] = strtok(inputline," \n\t")) == NULL) continue;
 		
 		// We read all the tokens of the input and pass it to our
 		// commandHandler as the argument
@@ -488,7 +478,6 @@ int main(int argc, char *argv[], char ** envp) {
 		commandHandler(tokens);
 		
 	}
-    
     clearScreen();
 	exit(0);
 }
