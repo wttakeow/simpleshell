@@ -172,7 +172,7 @@ void pipeHandler(char * args[]){
 	int l = 0;
 	
 	// First we calculate the number of commands (they are separated
-	// by '|')
+	// by ';')
 	while (args[l] != NULL){
 		if (strcmp(args[l],";") == 0){
 			num_cmds++;
@@ -181,7 +181,7 @@ void pipeHandler(char * args[]){
 	}
 	num_cmds++;
 	
-	// Main loop of this method. For each command between '|', the
+	// Main loop of this method. For each command between ';', the
 	// pipes will be configured and standard input and/or output will
 	// be replaced. Then it will be executed
 	while (args[j] != NULL && end != 1){
@@ -442,7 +442,7 @@ int main(int argc, char *argv[], char ** envp) {
 	chdir(getenv("HOME")); //
 	// We call the method of initialization, clearing the screen and the welcome screen
 	init();
-    	clearScreen();
+    clearScreen();
 	welcomeScreen(argc);
 	
     
