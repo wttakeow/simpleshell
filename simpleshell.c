@@ -121,7 +121,7 @@ void launchProg(char **args, int background){
 		// process to handle them with signalHandler_int)	
 		signal(SIGINT, SIG_IGN);
 		
-		// We set parent=<pathname>/simple-c-shell as an environment variable
+		// We set parent=<pathname>/simpleshell as an environment variable
 		// for the child
 		setenv("parent",getcwd(currentDirectory, 1024),1);	
 		
